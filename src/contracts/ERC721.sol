@@ -13,6 +13,9 @@ pragma solidity ^0.8.0;
   */
 
 contract ERC721 {
+
+  event Transfer(address indexed from, address indexed to, uint256 indexed tokenId);
+
   mapping(uint256 => address) private _tokenOwner;
   mapping(address => uint256) private _ownedTokensCount;
 
@@ -27,6 +30,8 @@ contract ERC721 {
     require(!_exists(tokenId), 'ERC721: token already minted');
     _tokenOwner[tokenId] = to;
     _ownedTokensCount[to] += 1;
+
+    emit Transfer(address(0), to, tokenId);
   } 
 
 }
