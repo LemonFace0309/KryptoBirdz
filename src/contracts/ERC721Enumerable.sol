@@ -23,26 +23,32 @@ contract ERC721Enumberable is ERC721 {
     return _allTokens.length;
   }
 
-  // /// @notice Enumerate valid NFTs
-  // /// @dev Throws if `_index` >= `totalSupply()`.
-  // /// @param _index A counter less than `totalSupply()`
-  // /// @return The token identifier for the `_index`th NFT,
-  // ///  (sort order not specified)
-  // function tokenByIndex(uint256 _index) external view returns (uint256);
+  /// @notice Enumerate valid NFTs
+  /// @dev Throws if `_index` >= `totalSupply()`.
+  /// @param _index A counter less than `totalSupply()`
+  /// @return The token identifier for the `_index`th NFT,
+  ///  (sort order not specified)
+  function tokenByIndex(uint256 _index) public view returns(uint256) {
+    require(_index < totalSupply(), 'global index is out of bounds');
+    return _allTokens[_index];
+  }
 
-  // /// @notice Enumerate NFTs assigned to an owner
-  // /// @dev Throws if `_index` >= `balanceOf(_owner)` or if
-  // ///  `_owner` is the zero address, representing invalid NFTs.
-  // /// @param _owner An address where we are interested in NFTs owned by them
-  // /// @param _index A counter less than `balanceOf(_owner)`
-  // /// @return The token identifier for the `_index`th NFT assigned to `_owner`,
-  // ///   (sort order not specified)
-  // function tokenOfOwnerByIndex(address _owner, uint256 _index) external view returns (uint256);
+
+  /// @notice Enumerate NFTs assigned to an owner
+  /// @dev Throws if `_index` >= `balanceOf(_owner)` or if
+  ///  `_owner` is the zero address, representing invalid NFTs.
+  /// @param _owner An address where we are interested in NFTs owned by them
+  /// @param _index A counter less than `balanceOf(_owner)`
+  /// @return The token identifier for the `_index`th NFT assigned to `_owner`,
+  ///   (sort order not specified)
+    function tokenOfOwnerByIndex(address _owner, uint256 _index) public view returns(uint256) {
+    require(_index < balanceOf(_owner), 'owner index is out of bounds');
+    return _ownedTokens[_owner][_index];
+  }
 
   function _mint(address to, uint256 tokenId) internal override(ERC721) {
     super._mint(to, tokenId);
   
-    /// Todo: add tokens to the owner
     _addTokensToAllTokenEnumeration(tokenId);
     _addTokensToOwnerEnumeration(to, tokenId);
   }
@@ -55,15 +61,5 @@ contract ERC721Enumberable is ERC721 {
   function _addTokensToOwnerEnumeration(address to, uint256 tokenId) private {
     _ownedTokens[to].push(tokenId);
     _ownedTokensIndex[tokenId] = _ownedTokens[to].length - 1;
-  }
-
-  function tokenByIndex(uint256 index) public view returns(uint256) {
-    require(index <= totalSupply(), 'global index is out of bounds');
-    return _allTokens[index];
-  }
-
-  function tokenOfOwnerByIndex(address owner, uint256 index) public view returns(uint256) {
-    require(index < balanceOf(owner), 'owner index is out of bounds');
-    return _ownedTokens[owner][index];
   }
 }
